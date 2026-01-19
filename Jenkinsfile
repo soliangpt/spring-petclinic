@@ -26,9 +26,9 @@ pipeline {
           echo 'Maven Build Failure'
         } 
        }
-    }  
-    }
-    }
+      }  
+  
+    
 
       
 
