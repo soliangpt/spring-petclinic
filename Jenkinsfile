@@ -6,7 +6,7 @@ pipeline {
     jdk "JDK17"
   }
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('dockerCredential')
+    DOCKERHUB_CREDENTIALS = credentials('dockerCredencial')
   }
   
   stages {
@@ -47,7 +47,7 @@ pipeline {
         steps {
           echo 'Docker Image Upload'
           sh """
-             echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+             echo $DOCKERHUB_CREDENCIALS_PSW | docker login -u $DOCKERHUB_CREDENCIALS_USR --password-stdin
              docker push soliangpt/spring-petclinic:lastest
              """
 
