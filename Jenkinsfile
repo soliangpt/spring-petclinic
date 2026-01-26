@@ -47,9 +47,9 @@ pipeline {
         steps {
           echo 'Docker Image Upload'
           sh """
-            echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
-            docker push soliangpt/spring-petclinic:lastest
-            """
+             echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+             docker push soliangpt/spring-petclinic:lastest
+             """
 
         }
       }
