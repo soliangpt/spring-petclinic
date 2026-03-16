@@ -70,7 +70,7 @@ pipeline {
         echo 'Upload to S3'
         dir("${env.WORKSPACE}") {
             sh 'zip -r scripts.zip ./scripts appspec.yml'
-            withAWS(region:"${REGION}", credentials: 'AWSCredentials') {
+            withAWS(region:"${REGION}", credentials:"${AWS_CREDENTIALS_NAME}") {
               s3Upload(file:"scripts.zip", bucket:"user07-codedeploy-bucket")
             }
             sh 'rm -rf ./scripts.zip'
@@ -82,6 +82,7 @@ pipeline {
     // Code Deploy
     stage('Codedeploy Workload') {
       steps {
+        withAWS(region:"${REGION}", credentials:"${AWS_CREDENTIALS_NAME}") {
         sh '''
            aws deploy create-deployment-group \
            --application-name user07-code-deploy \
