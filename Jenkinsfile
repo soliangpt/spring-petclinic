@@ -3,10 +3,12 @@ pipeline {
 
   tools {
     maven "M3"
-    jdk "JDK17"
+    jdk "JDK21"
   }
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('dockerCredential')
+    REGION = "ap-northeast-2"
+    DOCKERHUB_CREDENTIALS = credentials('DockerCredential')
+    AWS_CREDENTIALS_NAME = credentials('AWSCredentials')
   }
 
   stages {
@@ -62,26 +64,23 @@ pipeline {
       }
     }
 
-    // SSH Publish
-    stage('SSH Publish') {
+    // Upload to S3
+    stage('upload to S3') {
       steps {
-        echo 'SSH Publish'
-        sshPublisher(publishers: [sshPublisherDesc(configName: 'target', 
-        transfers: [sshTransfer(cleanRemote: false, 
-        excludes: '', 
-        execCommand: '''
-        docker rm -f $(docker ps -aq)
-        docker rmi -f $(docker images -q)
-        docker run -itd -p 80:8080 --name=spring-petclinic soliangpt/spring-petclinic:latest
-        ''', 
-        execTimeout: 120000, 
-        flatten: false, makeEmptyDirs: false, 
-        noDefaultExcludes: false, patternSeparator: '[, ]+', 
-        remoteDirectory: '', 
-        remoteDirectorySDF: false, removePrefix: 'target', sourceFiles: '')], 
-        usePromotionTimestamp: false, 
-        useWorkspaceInPromotion: false, verbose: false)])
+        echo 'Upload to S3'
+        dir("$(env.WORKSPACE)") {
+            sh 'zip -r scripts ./scripts appspec.yml'
+            withAWS(region:"${REGION}", credentials:"${AWS_CREDENTIALS_NAME}") {
+              s3Upload(file:"scripts.zip", bucket:"user07-codedeploy-bucket")
+            }
+            sh 'rm -rf ./scripts.zip'
+        }
       }
     }
+
+
+    // Code Deploy
+
+    
   }  
 }
