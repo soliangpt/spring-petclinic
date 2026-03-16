@@ -8,7 +8,7 @@ pipeline {
   environment {
     REGION = "ap-northeast-2"
     DOCKERHUB_CREDENTIALS = credentials('DockerCredentials')
-    AWS_CREDENTIALS_NAME = credentials('AWSCredentials')
+    AWS_CREDENTIALS_NAME = "AWSCredentials"
   }
 
   stages {
@@ -97,6 +97,7 @@ pipeline {
            --deployment-group-name user07-code-deploy-${BUILD_NUMBER} \
            --s3-location bucket=user07-codedeploy-bucket,bundleType=zip,key=scripts.zip
            '''
+        }
         sleep(10) // sleep 10s
       }
     }
